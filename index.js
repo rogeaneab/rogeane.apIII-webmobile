@@ -1,61 +1,73 @@
-import { View, Text, FlatList, StyleSheet, TouchableOpacity } from 'react-native';
-import { useState } from 'react';
+import { View, Text, FlatList, TouchableOpacity, StyleSheet } from 'react-native';
+import { useState, useEffect } from 'react';
+import { useRouter, useLocalSearchParams } from 'expo-router';
 
-export default function Index() {
+export default function MeusEventos() {
   const [eventos, setEventos] = useState([
-    { id: '1', nome: 'Conexão Acadêmica', data: '04 Novembro, 2025' },
-    { id: '2', nome: 'Semana de Tecnologia', data: '10 Dezembro, 2025' }
+    { nome: 'Conexão Acadêmica', data: '04 Novembro,,2025'},
+    { nome: 'Conexão Acadêmica', data: '04 Novembro, 2025'},
+    { nome: 'Conexão Acadêmica', data: '04 Novembro, 2025'},
+    { nome: 'Conexão Acadêmica', data: '04 Novembro, 2025'},
+    { nome: 'Conexão Acadêmica', data: '04 Novembro, 2025'},
+    
   ]);
+  const router = useRouter();
+  const { nome, data } = useLocalSearchParams();
+
+  useEffect(() => {
+    if (nome && data) {
+      setEventos((prev) => [...prev, { nome, data }]);
+    }
+  }, [nome, data]);
 
   return (
     <View style={styles.container}>
-      <Text style={styles.titulo}>Meus Eventos</Text>
+      <Text style={styles.title}>Meus Eventos</Text>
 
       <FlatList
         data={eventos}
-        keyExtractor={item => item.id}
+        keyExtractor={(item, index) => index.toString()}
         renderItem={({ item }) => (
-          <View style={styles.item}>
-            <Text style={styles.nome}>{item.nome}</Text>
-            <Text style={styles.data}>{item.data}</Text>
+          <View style={styles.eventCard}>
+            <Text style={styles.eventTitle}>{item.nome}</Text>
+            <Text style={styles.eventDate}>{item.data}</Text>
           </View>
         )}
-        ListEmptyComponent={() => (
-          <Text style={styles.vazio}>Nenhum evento registrado</Text>
-        )}
+        contentContainerStyle={{ gap: 12 }}
       />
 
-      <TouchableOpacity style={styles.botao}>
-        <Text style={styles.botaoTexto}>Registrar novo evento</Text>
+      <TouchableOpacity
+        style={styles.button}
+        onPress={() => router.push('/add-event')}
+      >
+        <Text style={styles.buttonText}>Registrar novo evento</Text>
       </TouchableOpacity>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1, backgroundColor: '#fff', padding: 24
-  },
-  titulo: {
-    fontSize: 24, fontWeight: 'bold', marginTop: 48, marginBottom: 24
-  },
-  item: {
-    padding: 16, backgroundColor: '#eee', borderRadius: 8, marginBottom: 12
-  },
-  nome: {
-    fontSize: 16, fontWeight: 'bold'
-  },
-  data: {
-    fontSize: 14, color: '#666'
-  },
-  vazio: {
-    color: '#888', textAlign: 'center', marginTop: 32
-  },
-  botao: {
-    backgroundColor: '#003300', padding: 16, borderRadius: 8, alignItems: 'center', marginTop: 16
-  },
-  botaoTexto: {
-    color: '#fff', fontSize: 16
-  }
-});
+  container: { flex: 1, backgroundColor: '#fff', padding: 20, paddingBottom: 40 },
+  title: {
+  fontSize: 24,
+  fontWeight: 'bold',
+  marginBottom: 16,
+  textAlign: 'center',  // <-- centraliza o texto
+},
 
+  eventCard: {
+    backgroundColor: '#F2F2F2',
+    padding: 16,
+    borderRadius: 12,
+  },
+  eventTitle: { fontSize: 16, fontWeight: 'bold', marginBottom: 4 },
+  eventDate: { fontSize: 14, color: '#666' },
+  button: {
+    backgroundColor: '#0B3D0B',
+    paddingVertical: 14,
+    borderRadius: 12,
+    alignItems: 'center',
+    marginTop: 24,
+  },
+  buttonText: { color: '#FFF', fontSize: 16, fontWeight: '600' },
+});
